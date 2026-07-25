@@ -49,7 +49,7 @@
 ---
 
 <details>
-<summary><b>🛠 For Developers / Запуск из кода</b></summary>
+<summary><b>For Developers / Запуск из кода</b></summary>
 
 ```bash
 # Install dependencies / Установка зависимостей
