@@ -1,8 +1,7 @@
 """
-Forza Horizon Universal Speed Chime
+Speed Chime
 ======================================
-- Speed (km/h) calculated from Velocity X, Y, Z at offsets 32, 36, 40
-- Triggers globally on any car
+Created with AI assistance (Gemini) & juniorThinks
 """
 
 import socket
@@ -22,7 +21,6 @@ UDP_IP = "127.0.0.1"
 UDP_PORT = 8888
 PACKET_SIZE = 324
 
-# Векторы скорости Velocity X, Y, Z
 VX_OFFSET = 32
 VY_OFFSET = 36
 VZ_OFFSET = 40
@@ -85,12 +83,9 @@ class App:
     def __init__(self, root):
         self.root = root
         self.root.title("Speed Chime")
-        self.root.geometry("450x500+100+80")
-        self.root.minsize(550, 500)
+        self.root.geometry("450x520+100+80")
+        self.root.minsize(550, 520)
         self.root.configure(bg="#1a1a24")
-
-        # Закомментировано: Окно больше НЕ закрепляется поверх остальных
-        # self.root.attributes("-topmost", True)
 
         self.running = False
         self.worker = None
@@ -127,7 +122,6 @@ class App:
         ttk.Entry(frm, textvariable=self.snd_var, width=30).grid(
             row=1, column=1, sticky="we", **pad)
 
-        # Создаем контейнер для двух кнопок
         btns = ttk.Frame(frm)
         btns.grid(row=1, column=2, sticky="w", **pad)
         ttk.Button(btns, text="Browse...", command=self._browse).pack(side="left", padx=(0, 5))
@@ -156,6 +150,11 @@ class App:
         self.stop_btn.pack(side="left", **pad)
         ttk.Button(ctl, text="Quit", command=self._quit).pack(side="right", **pad)
 
+        # Небольшая подпись о разработке в самом низу окна
+        footer = ttk.Label(self.root, text="Developed with AI assistance (Gemini)",
+                           font=("Segoe UI", 8), foreground="#888888")
+        footer.pack(side="bottom", pady=(0, 4))
+
     def _browse(self):
         p = filedialog.askopenfilename(filetypes=[("WAV", "*.wav"), ("All", "*.*")])
         if p:
@@ -167,7 +166,7 @@ class App:
             return
 
         self._read_settings()
-        self._cleanup_audio()  # Очищаем старый кэш аудио
+        self._cleanup_audio()
 
         try:
             self._init_audio()
@@ -180,7 +179,6 @@ class App:
 
         self._log("Testing sound (5 seconds)...")
         try:
-            # loops=-1 зациклит звук, а maxtime=5000 выключит его ровно через 5 сек
             self.chime.play(loops=-1, maxtime=5000)
         except Exception as e:
             self._log(f"Test play error: {e}")
