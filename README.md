@@ -1,12 +1,9 @@
 # 🏎 Forza Horizon — Speed Chime
 
-[🇷🇺 Русский](#-русская-версия) | [🇬🇧 English](#-english-version)
-
----
-
-## 🇷🇺 Русская версия
-
 Маленькая программа для **Forza Horizon**, которая издает звук (как в японских машинах), когда ты разгоняешься выше определенной скорости.
+
+<details>
+<summary><b>🇷🇺 Инструкция на русском (нажми, чтобы открыть)</b></summary>
 
 ### 🚀 Как запустить (готовую версию)
 
@@ -25,11 +22,10 @@
 - Если хочешь поставить свой звук — нажми кнопку **Browse...** и выбери любой `.wav` файл.
 - Нажми кнопку **Test**, чтобы послушать, как он звучит (играет 5 секунд).
 
----
+</details>
 
-## 🇬🇧 English Version
-
-A simple utility for **Forza Horizon** that plays a speed chime (like in JDM cars) whenever you exceed a specific speed limit.
+<details>
+<summary><b>🇬🇧 English Guide (click to expand)</b></summary>
 
 ### 🚀 How to Run (Pre-built EXE)
 
@@ -48,9 +44,12 @@ A simple utility for **Forza Horizon** that plays a speed chime (like in JDM car
 - To use your custom sound, click **Browse...** and select any `.wav` file.
 - Click **Test** to preview your sound (plays for 5 seconds).
 
+</details>
+
 ---
 
-## 🛠 For Developers / Запуск из кода
+<details>
+<summary><b>🛠 For Developers / Запуск из кода</b></summary>
 
 ```bash
 # Install dependencies / Установка зависимостей
