@@ -7,7 +7,7 @@
 
 ###Как запустить (готовую версию)
 
-1. Скачай `SpeedChime.exe` со страницы **[Releases](https://github.com/JuniorThinks/SpeedChime/releases)**.
+1. Скачай `SpeedChime.exe` со страницы **[Releases](https://github.com/JuniorThinks/SpeedChime/releases)**(скоро).
 2. Запусти программу.
 3. В самой игре зайди в **Настройки ➔ интерфейс и геймплей**, пролистай в самый низ и включи вывод данных:
    - **Data Out (Вывод данных):** Вкл
@@ -29,7 +29,7 @@
 
 ###How to Run (Pre-built EXE)
 
-1. Download `SpeedChime.exe` from the **[Releases](https://github.com/JuniorThinks/SpeedChime/releases)** page.
+1. Download `SpeedChime.exe` from the **[Releases](https://github.com/JuniorThinks/SpeedChime/releases)**(soon) page.
 2. Run the application.
 3. In Forza Horizon, go to **Settings ➔ HUD & Gameplay**, scroll to the bottom, and enable telemetry:
    - **Data Out:** On
