@@ -30,9 +30,8 @@ UDP_IP = "127.0.0.1"
 UDP_PORT = 8888
 PACKET_SIZE = 324
 
+# Смещение первой оси (Velocity X). Y и Z идут следом, поэтому читаем блоком
 VX_OFFSET = 32
-VY_OFFSET = 36
-VZ_OFFSET = 40
 
 SPEED_MULTIPLIER = 3.6
 SANITY_LIMIT = 500.0
@@ -79,17 +78,16 @@ def parse_packet(data: bytes):
     if len(data) < PACKET_SIZE:
         return None
     try:
-        vx = struct.unpack_from("<f", data, VX_OFFSET)[0]
-        vy = struct.unpack_from("<f", data, VY_OFFSET)[0]
-        vz = struct.unpack_from("<f", data, VZ_OFFSET)[0]
+        vx, vy, vz = struct.unpack_from("<3f", data, VX_OFFSET)
     except struct.error:
         return None
 
-    if not all(-SANITY_LIMIT <= v <= SANITY_LIMIT for v in (vx, vy, vz)):
+    if not (-SANITY_LIMIT <= vx <= SANITY_LIMIT and
+            -SANITY_LIMIT <= vy <= SANITY_LIMIT and
+            -SANITY_LIMIT <= vz <= SANITY_LIMIT):
         return None
 
-    raw_speed_ms = math.sqrt(vx * vx + vy * vy + vz * vz)
-    return raw_speed_ms * SPEED_MULTIPLIER
+    return math.hypot(vx, vy, vz) * SPEED_MULTIPLIER
 
 
 # ====================== ГЛАВНОЕ ОКНО ======================
@@ -98,9 +96,8 @@ class App:
     def __init__(self, root):
         self.root = root
         self.root.geometry("450x550+100+80")
-        self.root.minsize(550, 550)
+        self.root.minsize(575, 550)
 
-        # === СТАВИМ ИКОНКУ ОКНА ===
         icon_path = get_resource_path("icon.ico")
         if os.path.exists(icon_path):
             self.root.iconbitmap(icon_path)
@@ -113,10 +110,10 @@ class App:
         self.running = False
         self.worker = None
         self.sock = None
+
         self.pygame = None
         self.chime = None
         self.playing = False
-        self.lock = threading.Lock()
 
         self.threshold = DEFAULT_THRESHOLD_KMH
         self.sound_path = None
@@ -261,8 +258,13 @@ class App:
     # ====================== ОСТАЛЬНАЯ ЛОГИКА ======================
 
     def _browse_sound(self):
-        p = filedialog.askopenfilename(filetypes=[("WAV Audio", "*.wav"), ("All files", "*.*")])
-        if p: self.snd_var.set(p)
+        # === ДОБАВЛЕНЫ ФОРМАТЫ MP3 И OGG ===
+        p = filedialog.askopenfilename(filetypes=[("Audio", "*.wav;*.mp3;*.ogg"), ("All files", "*.*")])
+        if p:
+            self.snd_var.set(p)
+            # Если выбран MP3, сразу пишем предупреждение в лог
+            if p.lower().endswith(".mp3"):
+                self._log_to_console(self._t("warn_mp3"))
 
     def _log_to_console(self, msg):
         ts = time.strftime("%H:%M:%S")
@@ -287,16 +289,22 @@ class App:
         return c1
 
     def _init_audio_engine(self):
-        import pygame
-        pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=256)
-        pygame.mixer.init()
-        self.pygame = pygame
-        self.chime = pygame.mixer.Sound(self._resolve_sound_path())
+        if not self.pygame:
+            import pygame
+            pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=256)
+            pygame.mixer.init()
+            self.pygame = pygame
+
+        if self.chime:
+            self.chime.stop()
+
+        self.chime = self.pygame.mixer.Sound(self._resolve_sound_path())
         self.chime.set_volume(0.7)
 
     def _cleanup_audio_engine(self):
         try:
-            if self.playing and self.chime: self.chime.stop()
+            if self.playing and self.chime:
+                self.chime.stop()
         except Exception:
             pass
         self.playing = False
@@ -307,14 +315,6 @@ class App:
             except Exception:
                 pass
             self.sock = None
-
-        if self.pygame:
-            try:
-                self.pygame.mixer.quit()
-            except Exception:
-                pass
-            self.pygame = None
-            self.chime = None
 
     def test_sound(self):
         if self.running:
@@ -348,6 +348,10 @@ class App:
         except ValueError:
             self.threshold = DEFAULT_THRESHOLD_KMH
         self.sound_path = self.snd_var.get().strip() or None
+
+        # === ПРОВЕРЯЕМ ПРИ СТАРТЕ === (Если вписали путь вручную)
+        if self.sound_path and self.sound_path.lower().endswith(".mp3"):
+            self._log_to_console(self._t("warn_mp3"))
 
         try:
             self._init_audio_engine()
@@ -386,6 +390,11 @@ class App:
 
     def _quit_app(self):
         self.stop_listener()
+        if self.pygame:
+            try:
+                self.pygame.mixer.quit()
+            except Exception:
+                pass
         self.root.destroy()
 
     def _network_loop(self):
@@ -402,9 +411,7 @@ class App:
                 self.ui_speed = speed_kmh
                 self.last_packet_t = time.time()
 
-                with self.lock:
-                    thr = self.threshold
-
+                thr = self.threshold
                 is_over = speed_kmh >= thr
 
                 if is_over and not self.playing:

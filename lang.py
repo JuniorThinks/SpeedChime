@@ -21,8 +21,9 @@ LANGUAGES = {
         "testing_sound": "Тест звука (5 секунд)...",
         "started": "Отслеживание запущено! Лимит >= {} км/ч",
         "stopped": "Отслеживание остановлено.",
-        "theme_light": "☀️ Светлая",
-        "theme_dark": "🌙 Тёмная"
+        "theme_light": "cветлая",
+        "theme_dark": "Тёмная",
+        "warn_mp3": "Внимание: формат .mp3 может вызывать микрозадержки звука. Рекомендуется .wav или .ogg"
     },
     "EN": {
         "title": "Speed Chime — Powered by Gemini AI",
@@ -46,7 +47,8 @@ LANGUAGES = {
         "testing_sound": "Testing sound (5 seconds)...",
         "started": "Listener started! Armed >= {} km/h",
         "stopped": "Listener stopped.",
-        "theme_light": "☀️ Light",
-        "theme_dark": "🌙 Dark"
+        "theme_light": "Light",
+        "theme_dark": "Dark",
+        "warn_mp3": "Warning: .mp3 format may cause audio latency. .wav or .ogg is recommended."
     }
 }
